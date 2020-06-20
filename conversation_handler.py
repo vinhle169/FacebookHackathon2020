@@ -5,18 +5,17 @@ class conversation(wit):
 
     # inherts wit class in order to grab intent, entities, and traits
     def __init__(self, utter):
+        print(f'Person: {utter}')
         super().__init__(utter)
         self.current_intent = None
         self.ongoing_intents = {}
 
     def update_utterance(self, utter):
+        print(f'Person: {utter}')
         if self.current_intent is None:
-            print('new topic')
             super().__init__(utter)
         else:
-            print('continuing convo')
             super().__init__(utter, new_convo=False)
-        # print('$$conversation updated$$')
 
     # runs the appropriate intent class
     def parse_convo(self):
@@ -55,18 +54,34 @@ class conversation(wit):
         pass
 
     def information(self):
-        pass
+        if 'info' not in self.ongoing_intents:
+            self.ongoing_intents['info'] = information(self.entities, self.traits)
+            self.ongoing_intents['info'].generate_response()
+            self.current_intent = None
+        else:
+            self.ongoing_intents['info'].generate_response(new_ent=self.entities, new_trait=self.traits)
+            self.current_intent = None
+        return self.ongoing_intents['info'].response
 
 
 if __name__ == '__main__':
-    print('Person: Hey my name is Josh Stupidson')
-    x = conversation('Hey my name is Josh Stupidson')
-    print('Bot: ', x.parse_convo())
+    x = conversation('Hey my name is Vincent Vangough')
+    print('Bot: ', x.parse_convo(), '\n')
 
-    x.update_utterance('Remind me to take my medicine in three minutes')
-    print('Person: Remind me to take my medicine in three minutes')
-    print('Bot: ', x.parse_convo())
+    x.update_utterance('Remind me to take my medicine in 2 hours')
+    print('Bot: ', x.parse_convo(), '\n')
 
     x.update_utterance('In 30 minutes')
-    print('Person: In 30 minutes')
-    print('Bot: ', x.parse_convo())
+    print('Bot: ', x.parse_convo(), '\n')
+
+    x.update_utterance('remind me to walk the dogs every 20 hours')
+    print('Bot:', x.parse_convo(), '\n')
+
+    x.update_utterance('tell me about recent covid stats')
+    print('Bot:', x.parse_convo(), '\n')
+
+    x.update_utterance('I think i have a family member with corona')
+    print('Bot:', x.parse_convo(), '\n')
+
+    x.update_utterance('What are the symptoms of corona?')
+    print('Bot:', x.parse_convo(), '\n')
