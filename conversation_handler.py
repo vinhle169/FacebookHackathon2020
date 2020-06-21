@@ -17,7 +17,7 @@ class conversation(wit):
             super().__init__(utter)
         else:
             super().__init__(utter, new_convo=False)
-        print(self.entities)
+        # print(self.entities)
 
     # runs the appropriate intent class
     def parse_convo(self):
@@ -37,7 +37,13 @@ class conversation(wit):
         pass
 
     def find(self):
-        pass
+        if 'find' not in self.ongoing_intents:
+            self.ongoing_intents['find'] = find(self.entities, self.traits)
+            self.ongoing_intents['find'].generate_response()
+        else:
+            self.ongoing_intents['find'].generate_response(new_ent=self.entities, new_trait=self.traits)
+            self.current_intent = None
+        return self.ongoing_intents['find'].response
 
     def criticism(self):
         pass
@@ -67,24 +73,32 @@ class conversation(wit):
 
 
 if __name__ == '__main__':
-    x = conversation('Hey my name is Vincent Vangough')
+    x = conversation('Hey my name is Donald Johnson')
     print('Bot: ', x.parse_convo(), '\n')
 
-    x.update_utterance('Remind me to take my medicine in 2 hours')
+    x.update_utterance('Remind me to take my medicine in 24 hours')
     print('Bot: ', x.parse_convo(), '\n')
 
-    x.update_utterance('In 30 minutes')
+    x.update_utterance('In 12 minutes')
     print('Bot: ', x.parse_convo(), '\n')
 
-    x.update_utterance('remind me to walk the dogs every 20 hours')
+    x.update_utterance('remind me to walk the dogs every 2 hours')
     print('Bot:', x.parse_convo(), '\n')
 
-    x.update_utterance('tell me about recent covid stats')
+    x.update_utterance('What is going on recently with COVID-19')
     print('Bot:', x.parse_convo(), '\n')
 
-    x.update_utterance('I think i have a family member with corona')
+    x.update_utterance('I think i have a friend that has corona')
     print('Bot:', x.parse_convo(), '\n')
 
     x.update_utterance('What are the symptoms of corona?')
     print('Bot:', x.parse_convo(), '\n')
-    x.update_utterance('What can I find online about the flu?')
+
+    x.update_utterance('Where is the closest dentist?')
+    print('Bot:', x.parse_convo(), '\n')
+
+    x.update_utterance('I am trying to reach it from W 529 Shadwell Carson CA')
+    print('Bot:', x.parse_convo(), '\n')
+
+    x.update_utterance('Where can I find information online about coughing?')
+    print('Bot:', x.parse_convo(), '\n')

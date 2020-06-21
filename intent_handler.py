@@ -3,7 +3,7 @@ import json
 import requests
 from datetime import datetime
 from bs4 import BeautifulSoup
-
+from googlesearch import search
 class main_intent:
 
     def __init__(self, entities, traits):
@@ -11,6 +11,7 @@ class main_intent:
         self.traits = traits
         self.response = "I'm not sure what are you saying can you try rephrasing that"
         self.current_time = datetime.now()
+        self.g_api_key = 'AIzaSyCE3wsY5xE41YPGVQavGq0EyVD1lo1b44Q'
 
 class salutation(main_intent):
 
@@ -43,19 +44,36 @@ class find(main_intent):
 
     def __init__(self, entities, traits):
         super().__init__(entities, traits)
+        self.curr_location, self.end_location = None, None
 
-    def generate_response(self, new_ent, new_trait):
+    def generate_response(self, new_ent=None, new_trait=None):
         if new_ent:
             self.entities = new_ent
         if new_trait:
             self.trait = new_trait
 
-        def search(query, online=True):
-            pass
-        if 'topic' in self.entities:
-            search(self.entities['topic']['val'], online='online' in self.entities)
-        
+        def search_info(query):
+            goal = [i for i in search(query + ' info', tld="com", num=1, stop=1, pause=1)][0]
+            self.response = f'You should check out {goal}, hope this is helpful!'
 
+        if 'topic' in self.entities:
+            search_info(self.entities['topic']['val'])
+
+        elif 'facilities' in self.entities:
+            if self.entities['facilities']['role'] != 'facilities':
+                self.end_location = self.entities['facilities']['role']
+            else:
+                self.end_location = self.entities['facilities']['val']
+            self.response = f"Where are you trying to reach the {self.end_location} from? I want to tell you the nearest one."
+
+        elif 'wit$location' in self.entities:
+            self.curr_location = self.entities['wit$location']['val']
+            url = "https://maps.googleapis.com/maps/api/place/textsearch/json?"
+            r = requests.get(url + 'query=' + self.end_location + '&open' + '&key=' + self.g_api_key)
+            result = r.json()['results'][0]
+            address = result['formatted_address']
+            name = result['name']
+            self.response = f"{name} at {address} is the closest open place to the location you provided"
 
 class criticism(main_intent):
 
