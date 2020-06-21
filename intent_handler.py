@@ -9,6 +9,7 @@ class main_intent:
     def __init__(self, entities, traits):
         self.entities = entities
         self.traits = traits
+        self.new = False
         self.response = "I'm not sure what are you saying can you try rephrasing that"
         self.current_time = datetime.now()
         self.g_api_key = 'AIzaSyCE3wsY5xE41YPGVQavGq0EyVD1lo1b44Q'
@@ -40,6 +41,8 @@ class express(main_intent):
     def generate_response(self):
         pass
 
+
+
 class find(main_intent):
 
     def __init__(self, entities, traits):
@@ -55,6 +58,7 @@ class find(main_intent):
         def search_info(query):
             goal = [i for i in search(query + ' info', tld="com", num=1, stop=1, pause=1)][0]
             self.response = f'You should check out {goal}, hope this is helpful!'
+            self.new = True
 
         if 'topic' in self.entities:
             search_info(self.entities['topic']['val'])
@@ -73,15 +77,35 @@ class find(main_intent):
             result = r.json()['results'][0]
             address = result['formatted_address']
             name = result['name']
+            self.new = True
             self.response = f"{name} at {address} is the closest open place to the location you provided"
 
 class criticism(main_intent):
 
     def __init__(self, entities, traits):
         super().__init__(entities, traits)
+        self.review = set()
 
-    def generate_response(self):
-        pass
+    def generate_response(self, utter):
+        self.review.add((utter, datetime.now()))
+        if 'wit$sentiment' in self.traits:
+            if self.traits['wit$sentiment'][0] != 'negative':
+                self.response = "Thank you for the kind words you're amazing c:"
+                self.new = True
+                return True
+            else:
+                self.response = "Sorry you feel that way would you like to tell us more?"
+        else:
+            self.response = "Okay, would you like to tell us more?"
+        return False
+
+    def more_criticism(self, utter):
+        if 'no' in utter:
+            self.response = "That's okay sorry the bot isn't perfect yet, we will take your words into consideration"
+        else:
+            self.review.add((utter, datetime.now()))
+            self.response = "Ok noted, thank you we will check this out ASAP"
+        self.new = True
 
 class remind(main_intent):
 
@@ -100,6 +124,7 @@ class remind(main_intent):
             if 'wit$duration' in self.entities:
                 self.interval = self.entities['wit$duration']['seconds']
                 self.response = f"Ok got it, you will be reminded about {self.reminder} every {self.entities['wit$duration']['val']}"
+                self.new = True
             else:
                 self.response = f"When would you want us to remind you about '{self.reminder}'?"
 
@@ -109,7 +134,7 @@ class remind(main_intent):
             self.datetime_obj = datetime.strptime(' '.join([date, time]), '%Y-%m-%d %H:%M:%S.%f')
             x = self.datetime_obj.strftime("on %m-%d-%Y at %H:%M")
             self.response = f"Ok got it, you will be reminded about '{self.reminder}' {x}"
-
+            self.new = True
 
 class correct(main_intent):
 
@@ -139,11 +164,13 @@ class information(main_intent):
                 with open('response.json', 'r') as cr:
                     rona_responses = json.load(cr)["corona"]
                 self.response = rona_responses[role]
+            self.new = True
         elif 'health' in self.entities:
             role = self.entities['health']['role']
             with open('response.json', 'r') as cr:
                 health_responses = json.load(cr)["health"]
             self.response = health_responses[role]
+            self.new = True
 
     def webcrawl(self, u):
         if u == 'rona':
