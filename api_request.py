@@ -17,6 +17,7 @@ class wit:
         # entities are stored as {entity_name: {val: entity_value, conf: entity: confidence, role: entity_role}, entity_2: {...}...}
         self.entities = {}
         special_cases = {'wit$duration', 'resources'}
+        # print(response['entities'])
         for val in response['entities'].values():
             val = val[0]
             name = val['name']
