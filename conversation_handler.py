@@ -12,10 +12,12 @@ class conversation(wit):
 
     def update_utterance(self, utter):
         print(f'Person: {utter}')
+
         if self.current_intent is None:
             super().__init__(utter)
         else:
             super().__init__(utter, new_convo=False)
+        print(self.entities)
 
     # runs the appropriate intent class
     def parse_convo(self):
@@ -85,3 +87,4 @@ if __name__ == '__main__':
 
     x.update_utterance('What are the symptoms of corona?')
     print('Bot:', x.parse_convo(), '\n')
+    x.update_utterance('What can I find online about the flu?')

@@ -15,15 +15,21 @@ class wit:
                 print("Unexpected no intent")
                 raise
         # entities are stored as {entity_name: {val: entity_value, conf: entity: confidence, role: entity_role}, entity_2: {...}...}
-        self.entities = {val[0]['name']: {'val': val[0]['value'], 'conf': val[0]
-                                          ['confidence'], 'role': val[0]['role']} for val in response['entities'].values()}
-        if 'wit$duration' in self.entities:
-            dur = response['entities']['wit$duration:interval'][0]
-            self.entities['wit$duration']['val'] = dur['body']
-            self.entities['wit$duration']['seconds'] = dur['normalized']['value']
+        self.entities = {}
+        special_cases = {'wit$duration', 'resources'}
+        for val in response['entities'].values():
+            val = val[0]
+            name = val['name']
+            if name not in special_cases:
+                self.entities[name] = {'val': val['value'], 'conf': val['confidence'], 'role': val['role']}
+
+            elif name == 'wit$duration':
+                self.entities[name] = {'val': val['body'], 'conf': val['confidence'],
+                                       'role': val['role'], 'seconds': val['normalized']['value']}
+            elif name == 'resources':
+                self.entities[val['role']] = {'val': val['value'], 'conf': val['confidence']}
         # traits are stored as {trait: (val, confid)}
         if 'traits' in response.keys():
             self.traits = {key: (val[0]['value'], val[0]['confidence']) for key, val in response['traits'].items()}
         else:
             self.traits = None
-

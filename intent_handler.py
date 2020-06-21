@@ -44,8 +44,18 @@ class find(main_intent):
     def __init__(self, entities, traits):
         super().__init__(entities, traits)
 
-    def generate_response(self):
-        pass
+    def generate_response(self, new_ent, new_trait):
+        if new_ent:
+            self.entities = new_ent
+        if new_trait:
+            self.trait = new_trait
+
+        def search(query, online=True):
+            pass
+        if 'topic' in self.entities:
+            search(self.entities['topic']['val'], online='online' in self.entities)
+        
+
 
 class criticism(main_intent):
 
