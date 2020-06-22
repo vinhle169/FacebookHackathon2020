@@ -27,7 +27,7 @@ class Home extends React.Component {
   }
 
   componentDidMount() {
-    this.endpoint = 'localhost:8008';
+    this.endpoint = 'https://heal-bot.herokuapp.com/';
     this.socket = io(this.endpoint);
     this.user_id = 'FIXME'  // FIX ME
     this.socket.on('response', (response) => {
@@ -47,15 +47,14 @@ class Home extends React.Component {
     this.setState({nextMessage: event.target.value});
   }
 
-  receiveMessage(response) {
-    console.log(response)
-    let newMessage = new Message({id: 1, response.response })
+  receiveMessage({ message }) {
+    let newMessage = new Message({id: 1, message })
     this.setState({messages: this.state.messages.concat(newMessage)})
   }
 
   sendHandler(event) {
     event.preventDefault();
-    this.socket.emit('message', {message: this.state.nextMessage});
+    this.socket.emit('sendMessage', {message: this.state.nextMessage});
     let newMessage = new Message({id: 0, message: this.state.nextMessage});
     this.setState({messages: this.state.messages.concat(newMessage), nextMessage: ''});
     var form = document.getElementById("chatbox");
