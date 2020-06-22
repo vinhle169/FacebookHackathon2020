@@ -5,6 +5,7 @@ import InputGroup from 'react-bootstrap/InputGroup'
 import Form from 'react-bootstrap/Form';
 import FormControl from 'react-bootstrap/FormControl';
 import Button from 'react-bootstrap/Button';
+import io from 'socket.io-client';
 
 const Style = styled.div`
   .inputBox {
@@ -28,6 +29,20 @@ class Home extends React.Component {
     this.changeHandler = this.changeHandler.bind(this);
   }
 
+  componentDidMount() {
+    this.endpoint = 'localhost:8008';
+    this.socket = io(this.endpoint);
+    this.user_id = 'FIXME'  // FIX ME
+    this.socket.emit('join', { user_id: this.user_id });
+    console.log(this.socket);
+  }
+
+  componentWillUnmount() {
+    this.socket.emit('disconnect');
+    this.socket.off()
+  }
+
+
   changeHandler(event) {
     console.log(event.target.value)
     this.setState({nextMessage: event.target.value});
@@ -37,6 +52,7 @@ class Home extends React.Component {
     event.preventDefault();
     let newMessage = new Message({id: 0, message: this.state.nextMessage});
     this.setState({messages: this.state.messages.concat(newMessage)});
+    this.socket.emit(this.state.nextMessage)
   }
 
   render() {
