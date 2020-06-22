@@ -18,11 +18,11 @@ io.on('connection', (socket) => {
     console.log(`${user_id} connected`)
     // query the previous messages from the database
 
-    socket.emit('response', {response: test_message1})
+    socket.emit('response', {message: test_message1})
   });
   socket.on('sendMessage', ({ message }) => {
     // send message to vinh's thing, then get response
-    socket.emit('response', {response: message})
+    socket.emit('response', {message: test_message2})
   });
   socket.on('disconnect', () => {
     console.log("user left")
