@@ -1,4 +1,5 @@
 from api_request import wit
+from datetime import datetime
 from intent_handler import salutation, express, find, criticism, remind, correct, information
 
 class conversation(wit):
@@ -9,6 +10,7 @@ class conversation(wit):
         super().__init__(utter)
         self.current_intent = None
         self.ongoing_intents = {}
+        self.criticisms = set()
 
     def update_utterance(self, utter):
         print(f'Person: {utter}')
@@ -37,7 +39,7 @@ class conversation(wit):
         pass
 
     def find(self):
-        if 'find' not in self.ongoing_intents:
+        if 'find' not in self.ongoing_intents or self.ongoing_intents['find'].new:
             self.ongoing_intents['find'] = find(self.entities, self.traits)
             self.ongoing_intents['find'].generate_response()
         else:
@@ -46,13 +48,22 @@ class conversation(wit):
         return self.ongoing_intents['find'].response
 
     def criticism(self):
-        pass
+        if 'criticism' not in self.ongoing_intents or self.ongoing_intents['criticism'].new:
+            self.ongoing_intents['criticism'] = criticism(self.entities, self.traits)
+            self.current_intent = None if self.ongoing_intents['criticism'].generate_response(self.utterance) else self.current_intent
+        else:
+            self.ongoing_intents['criticism'].more_criticism(self.utterance)
+            self.current_intent = None
+        self.criticisms.union(self.ongoing_intents['criticism'].review)
+        return self.ongoing_intents['criticism'].response
 
     def remind(self):
         # add something to save datetime and reminder details
-        if 'remind' not in self.ongoing_intents:
+        if 'remind' not in self.ongoing_intents or self.ongoing_intents['remind'].new:
             self.ongoing_intents['remind'] = remind(self.entities, self.traits)
             self.ongoing_intents['remind'].generate_response()
+            if self.ongoing_intents['remind'].new:
+                self.current_intent = None
         else:
             self.ongoing_intents['remind'].generate_response(new_ent=self.entities, new_trait=self.traits)
             self.current_intent = None
@@ -65,25 +76,15 @@ class conversation(wit):
         if 'info' not in self.ongoing_intents:
             self.ongoing_intents['info'] = information(self.entities, self.traits)
             self.ongoing_intents['info'].generate_response()
-            self.current_intent = None
         else:
             self.ongoing_intents['info'].generate_response(new_ent=self.entities, new_trait=self.traits)
-            self.current_intent = None
+        self.current_intent = None
         return self.ongoing_intents['info'].response
 
 
 if __name__ == '__main__':
     x = conversation('Hey my name is Donald Johnson')
     print('Bot: ', x.parse_convo(), '\n')
-
-    x.update_utterance('Remind me to take my medicine in 24 hours')
-    print('Bot: ', x.parse_convo(), '\n')
-
-    x.update_utterance('In 12 minutes')
-    print('Bot: ', x.parse_convo(), '\n')
-
-    x.update_utterance('remind me to walk the dogs every 2 hours')
-    print('Bot:', x.parse_convo(), '\n')
 
     x.update_utterance('What is going on recently with COVID-19')
     print('Bot:', x.parse_convo(), '\n')
@@ -100,5 +101,34 @@ if __name__ == '__main__':
     x.update_utterance('I am trying to reach it from W 529 Shadwell Carson CA')
     print('Bot:', x.parse_convo(), '\n')
 
-    x.update_utterance('Where can I find information online about coughing?')
+    # x.update_utterance('Where can I find information online about coughing?')
+    # print('Bot:', x.parse_convo(), '\n')
+    # x.update_utterance('I hate this app')
+    # print('Bot:', x.parse_convo(), '\n')
+
+    x.update_utterance("I don't like healbots attitude")
     print('Bot:', x.parse_convo(), '\n')
+    x.update_utterance('no')
+    print('Bot:', x.parse_convo(), '\n')
+
+    x.update_utterance("I don't like the way healbot looks")
+    print('Bot:', x.parse_convo(), '\n')
+    x.update_utterance('It has creepy eyes')
+    print('Bot:', x.parse_convo(), '\n')
+
+    x.update_utterance("I love the features of this app!")
+    print('Bot:', x.parse_convo(), '\n')
+
+    x.update_utterance('Remind me to take my medicine in 24 hours')
+    print('Bot: ', x.parse_convo(), '\n')
+
+    x.update_utterance('In 12 minutes')
+    print('Bot: ', x.parse_convo(), '\n')
+
+    x.update_utterance('remind me to walk the dogs every 2 hours')
+    print('Bot:', x.parse_convo(), '\n')
+
+    x.update_utterance('Remind me to drink water every second')
+    print('Bot: ', x.parse_convo(), '\n')
+
+

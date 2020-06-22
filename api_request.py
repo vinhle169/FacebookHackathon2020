@@ -16,14 +16,18 @@ class wit:
                 raise
         # entities are stored as {entity_name: {val: entity_value, conf: entity: confidence, role: entity_role}, entity_2: {...}...}
         self.entities = {}
-        special_cases = {'wit$duration', 'resources'}
-        # print(response['entities'])
+        special_cases = {'wit$duration', 'resources', 'wit$location'}
         for val in response['entities'].values():
             val = val[0]
             name = val['name']
             if name not in special_cases:
                 self.entities[name] = {'val': val['value'], 'conf': val['confidence'], 'role': val['role']}
 
+            elif name == 'wit$location':
+                if 'value' in val:
+                    self.entities[name] = {'val': val['value'], 'conf': val['confidence'], 'role': val['role']}
+                else:
+                    self.entities[name] = {'val': val['resolved']['values'][0]['name'], 'conf': val['confidence'], 'role': val['role']}
             elif name == 'wit$duration':
                 self.entities[name] = {'val': val['body'], 'conf': val['confidence'],
                                        'role': val['role'], 'seconds': val['normalized']['value']}
