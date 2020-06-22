@@ -69,11 +69,11 @@ class Home extends React.Component {
             bubbleStyles={
             {
             text: {
-                fontSize: 30
+                fontSize: 14
             },
             chatbubble: {
-                borderRadius: 70,
-                padding: 40
+                borderRadius: 30,
+                padding: 20
             }
             }
             }
