@@ -67,15 +67,15 @@ class Home extends React.Component {
         <ChatFeed
           messages={this.state.messages}
             bubbleStyles={
-            {
-            text: {
-                fontSize: 14
-            },
-            chatbubble: {
-                borderRadius: 30,
-                padding: 20
-            }
-            }
+              {
+              text: {
+                  fontSize: 14
+              },
+              chatbubble: {
+                  borderRadius: 30,
+                  padding: 20
+              }
+              }
             }
             showSenderName
         />
