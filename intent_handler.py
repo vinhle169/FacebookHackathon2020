@@ -1,6 +1,7 @@
 import re
 import json
 import requests
+from random import randint
 from datetime import datetime
 from bs4 import BeautifulSoup
 from googlesearch import search
@@ -9,7 +10,7 @@ class main_intent:
     def __init__(self, entities, traits):
         self.entities = entities
         self.traits = traits
-        self.new = False
+        self.new = True
         self.response = "I'm not sure what are you saying can you try rephrasing that"
         self.current_time = datetime.now()
         self.g_api_key = 'AIzaSyCE3wsY5xE41YPGVQavGq0EyVD1lo1b44Q'
@@ -38,10 +39,40 @@ class express(main_intent):
     def __init__(self, entities, traits):
         super().__init__(entities, traits)
 
-    def generate_response(self):
-        pass
+    def emotion_handler(self, emotion):
+        if emotion == 'happy':
+            self.response = "YESSS we love to hear that :D"
+        else:
+            with open('response.json', 'r') as jk:
+                resp = json.load(jk)
+            if emotion == 'sad':
+                resp = resp["jokes"]
+                self.response = f"{resp['0']}{resp[str(randint(1,3))]}"
+            else:
+                self.response = resp["corona"][emotion]
 
+    def generate_response(self, new_ent=None, new_trait=None):
+        if new_ent:
+            self.entities = new_ent
+        if new_trait:
+            self.trait = new_trait
 
+        if 'emotion' in self.entities:
+            emote = self.entities['emotion']['role']
+            self.emotion_handler(emote)
+
+        elif 'symptom' in self.entities:
+            simp = self.entities['symptom']
+            body_parts = simp.get('body_part')
+            body_part = body_parts['val'] if body_parts else ''
+            symps = simp.get('symptom') or simp.get('specific')
+            symp = symps['val']
+            q = body_part + ' ' + symp
+            q1, q2 = q + ' information', q + ' treatment'
+            q1 = f"Here's some information on {q} " + [i for i in search(q1, tld="com", num=1, stop=1, pause=.5)][0]
+            q2 = f"Here's info on how to treat {q} " + [i for i in search(q2, tld="com", num=1, stop=1, pause=.5)][0]
+            self.response = f"{q1}\n{q2}\nHope this helps!"
+        self.new = True
 
 class find(main_intent):
 
@@ -69,7 +100,7 @@ class find(main_intent):
             else:
                 self.end_location = self.entities['facilities']['val']
             self.response = f"Where are you trying to reach the {self.end_location} from? I want to tell you the nearest one."
-
+            self.new = False
         elif 'wit$location' in self.entities:
             self.curr_location = self.entities['wit$location']['val']
             url = "https://maps.googleapis.com/maps/api/place/textsearch/json?"
@@ -97,10 +128,11 @@ class criticism(main_intent):
                 self.response = "Sorry you feel that way would you like to tell us more?"
         else:
             self.response = "Okay, would you like to tell us more?"
+        self.new = False
         return False
 
     def more_criticism(self, utter):
-        if 'no' in utter:
+        if 'no' in utter.lower():
             self.response = "That's okay sorry the bot isn't perfect yet, we will take your words into consideration"
         else:
             self.review.add((utter, datetime.now()))
@@ -127,7 +159,7 @@ class remind(main_intent):
                 self.new = True
             else:
                 self.response = f"When would you want us to remind you about '{self.reminder}'?"
-
+                self.new = False
         elif 'wit$datetime' in self.entities:
             date, time = self.entities['wit$datetime']['val'].split('T')
             time = time[:time.find('-')]
@@ -135,14 +167,6 @@ class remind(main_intent):
             x = self.datetime_obj.strftime("on %m-%d-%Y at %H:%M")
             self.response = f"Ok got it, you will be reminded about '{self.reminder}' {x}"
             self.new = True
-
-class correct(main_intent):
-
-    def __init__(self, entities, traits):
-        super().__init__(entities, traits)
-
-    def generate_response(self):
-        pass
 
 class information(main_intent):
 

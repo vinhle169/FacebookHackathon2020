@@ -10,19 +10,22 @@ class wit:
         self.auth_Header = {'Authorization': f'Bearer {self.server_Token}'}
         response = requests.get(url=URL, headers=self.auth_Header).json()
         if new_convo:
+            if 'intents' not in response or len(response['intents']) == 0:
+                self.intent, self.entities, self.traits = None, None, None
+                return
             self.intent = response['intents'][0]['name']
-            if len(response['intents']) == 0:
-                print("Unexpected no intent")
-                raise
+
         # entities are stored as {entity_name: {val: entity_value, conf: entity: confidence, role: entity_role}, entity_2: {...}...}
         self.entities = {}
-        special_cases = {'wit$duration', 'resources', 'wit$location'}
+        special_cases = {'wit$duration', 'resources', 'wit$location', 'symptom'}
         for val in response['entities'].values():
             val = val[0]
             name = val['name']
             if name not in special_cases:
                 self.entities[name] = {'val': val['value'], 'conf': val['confidence'], 'role': val['role']}
-
+            elif name == 'symptom':
+                self.entities.setdefault(name, {})
+                self.entities[name][val['role']] = {'val': val['value']}
             elif name == 'wit$location':
                 if 'value' in val:
                     self.entities[name] = {'val': val['value'], 'conf': val['confidence'], 'role': val['role']}

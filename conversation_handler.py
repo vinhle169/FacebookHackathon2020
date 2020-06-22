@@ -1,6 +1,5 @@
 from api_request import wit
-from datetime import datetime
-from intent_handler import salutation, express, find, criticism, remind, correct, information
+from intent_handler import salutation, express, find, criticism, remind, information
 
 class conversation(wit):
 
@@ -11,6 +10,7 @@ class conversation(wit):
         self.current_intent = None
         self.ongoing_intents = {}
         self.criticisms = set()
+        self.unknown_response = "I am sorry can you try rephrasing that, I might not be built to handle your request"
 
     def update_utterance(self, utter):
         print(f'Person: {utter}')
@@ -23,6 +23,9 @@ class conversation(wit):
 
     # runs the appropriate intent class
     def parse_convo(self):
+        if not self.intent and not self.current_intent:
+            self.current_intent = None
+            return self.unknown_response
         intent = getattr(self, self.intent)
         self.current_intent = intent
         return self.current_intent()
@@ -36,12 +39,17 @@ class conversation(wit):
         return s.response
 
     def express(self):
-        pass
+        self.ongoing_intents.setdefault('express', express(self.entities, self.traits))
+        self.ongoing_intents['express'].generate_response(self.entities, self.traits)
+        self.current_intent = None
+        return self.ongoing_intents['express'].response
 
     def find(self):
         if 'find' not in self.ongoing_intents or self.ongoing_intents['find'].new:
             self.ongoing_intents['find'] = find(self.entities, self.traits)
             self.ongoing_intents['find'].generate_response()
+            if self.ongoing_intents['find']:
+                self.current_intent = None
         else:
             self.ongoing_intents['find'].generate_response(new_ent=self.entities, new_trait=self.traits)
             self.current_intent = None
@@ -101,19 +109,18 @@ if __name__ == '__main__':
     x.update_utterance('I am trying to reach it from W 529 Shadwell Carson CA')
     print('Bot:', x.parse_convo(), '\n')
 
-    # x.update_utterance('Where can I find information online about coughing?')
-    # print('Bot:', x.parse_convo(), '\n')
-    # x.update_utterance('I hate this app')
-    # print('Bot:', x.parse_convo(), '\n')
+    x.update_utterance('Where can I find information online about coughing?')
+    print('Bot:', x.parse_convo(), '\n')
+
+    x.update_utterance('I hate this app')
+    print('Bot:', x.parse_convo(), '\n')
 
     x.update_utterance("I don't like healbots attitude")
-    print('Bot:', x.parse_convo(), '\n')
-    x.update_utterance('no')
     print('Bot:', x.parse_convo(), '\n')
 
     x.update_utterance("I don't like the way healbot looks")
     print('Bot:', x.parse_convo(), '\n')
-    x.update_utterance('It has creepy eyes')
+    x.update_utterance('No')
     print('Bot:', x.parse_convo(), '\n')
 
     x.update_utterance("I love the features of this app!")
@@ -128,7 +135,17 @@ if __name__ == '__main__':
     x.update_utterance('remind me to walk the dogs every 2 hours')
     print('Bot:', x.parse_convo(), '\n')
 
-    x.update_utterance('Remind me to drink water every second')
+    x.update_utterance('i have back pain')
     print('Bot: ', x.parse_convo(), '\n')
 
+    x.update_utterance('I am feeling a little sad')
+    print('Bot: ', x.parse_convo(), '\n')
 
+    x.update_utterance('I am feeling depressed')
+    print('Bot: ', x.parse_convo(), '\n')
+
+    x.update_utterance('I am happy!')
+    print('Bot: ', x.parse_convo(), '\n')
+
+    x.update_utterance('I am feeling a little scared bc of the rona')
+    print('Bot: ', x.parse_convo(), '\n')
