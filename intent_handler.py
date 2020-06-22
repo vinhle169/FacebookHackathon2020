@@ -210,6 +210,4 @@ class information(main_intent):
             string1 = f"{' '.join(target[2::-1])} and within 24 hours there were {' '.join(target[3:])}.\n"
             string2 = f"Sadly the total death count is {target2[2]} and there were {' '.join(target2[3:])} yesterday."
             self.response += string1 + string2
-        else:
-            pass
-            return None
+
