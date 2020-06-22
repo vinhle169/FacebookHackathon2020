@@ -12,11 +12,13 @@ const io = socketio(server)
 io.on('connection', (socket) => {
   console.log("new connection")
   socket.on('join', ({ user_id }) => {
-    console.log(`${user_id} joined`)
-    socket.emit('FIXME: SEND THE MESSAGES')
+    console.log(`${user_id} connected`)
+    // query the previous messages from the database
+    socket.emit('loadPast', {messages: 'FIXME: SEND THE PAST MESSAGES'})
   });
   socket.on('sendMessage', ({ message }) => {
-    socket.emit('FIXME: send the message')
+    // send message to vinh's thing, then get response
+    socket.emit('response', {response: 'FIXME: send the response message'})
   });
   socket.on('disconnect', () => {
     console.log("user left")

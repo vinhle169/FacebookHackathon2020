@@ -18,7 +18,7 @@ const Style = styled.div`
   }
 `;
 
-const test_messages = [new Message({id: 1, message: "Hello World!", senderName: "Elon Musk"}),
+const test_messages = [new Message({id: 1, message: "Hello World!", senderName: "Heal-Bot"}),
                         new Message({id: 0, message: "Whats up"})]
 
 class Home extends React.Component {
@@ -33,7 +33,13 @@ class Home extends React.Component {
     this.endpoint = 'localhost:8008';
     this.socket = io(this.endpoint);
     this.user_id = 'FIXME'  // FIX ME
-    this.socket.emit('join', { user_id: this.user_id });
+    this.socket.emit('join', {user_id: this.user_id});
+    this.socket.on('loadPast', (messages) => {
+      this.setState({ messages });
+    });
+    this.socket.on('response', (message) => {
+      this.receiveMessage(message);
+    });
     console.log(this.socket);
   }
 
@@ -42,17 +48,21 @@ class Home extends React.Component {
     this.socket.off()
   }
 
-
   changeHandler(event) {
     console.log(event.target.value)
     this.setState({nextMessage: event.target.value});
+  }
+
+  receiveMessage(message) {
+    let newMessage = new Message({id: 1, message })
+    this.setState({messages: this.state.messages.concat(newMessage)})
   }
 
   sendHandler(event) {
     event.preventDefault();
     let newMessage = new Message({id: 0, message: this.state.nextMessage});
     this.setState({messages: this.state.messages.concat(newMessage)});
-    this.socket.emit(this.state.nextMessage)
+    this.socket.emit('message', {message: this.state.nextMessage})
   }
 
   render() {
