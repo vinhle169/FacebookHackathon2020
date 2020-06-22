@@ -18,13 +18,10 @@ const Style = styled.div`
   }
 `;
 
-const test_messages = [new Message({id: 1, message: "Hello World!", senderName: "Heal-Bot"}),
-                        new Message({id: 0, message: "Whats up"})]
-
 class Home extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {messages: test_messages, nextMessage: ""};
+    this.state = {messages: [], nextMessage: ""};
     this.sendHandler = this.sendHandler.bind(this);
     this.changeHandler = this.changeHandler.bind(this);
   }
@@ -33,13 +30,10 @@ class Home extends React.Component {
     this.endpoint = 'localhost:8008';
     this.socket = io(this.endpoint);
     this.user_id = 'FIXME'  // FIX ME
+    this.socket.on('response', (response) => {
+      this.receiveMessage(response);
+    });
     this.socket.emit('join', {user_id: this.user_id});
-    this.socket.on('loadPast', (messages) => {
-      this.setState({ messages });
-    });
-    this.socket.on('response', (message) => {
-      this.receiveMessage(message);
-    });
     console.log(this.socket);
   }
 
@@ -53,16 +47,19 @@ class Home extends React.Component {
     this.setState({nextMessage: event.target.value});
   }
 
-  receiveMessage(message) {
-    let newMessage = new Message({id: 1, message })
+  receiveMessage(response) {
+    console.log(response)
+    let newMessage = new Message({id: 1, response.response })
     this.setState({messages: this.state.messages.concat(newMessage)})
   }
 
   sendHandler(event) {
     event.preventDefault();
+    this.socket.emit('message', {message: this.state.nextMessage});
     let newMessage = new Message({id: 0, message: this.state.nextMessage});
-    this.setState({messages: this.state.messages.concat(newMessage)});
-    this.socket.emit('message', {message: this.state.nextMessage})
+    this.setState({messages: this.state.messages.concat(newMessage), nextMessage: ''});
+    var form = document.getElementById("chatbox");
+    form.reset();
   }
 
   render() {
@@ -83,7 +80,7 @@ class Home extends React.Component {
             }
             showSenderName
         />
-        <Form onSubmit={this.sendHandler}>
+        <Form onSubmit={this.sendHandler} id='chatbox'>
           <InputGroup>
             <FormControl
               placeholder="Send a message..."
