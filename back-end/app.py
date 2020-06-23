@@ -25,7 +25,7 @@ def handle_connect():
 def handle_message(message):
     global user_ids
     print(message)
-    print(request.sid+ ': ' + message['message'])
+    print(request.sid + ': ' + message['message'])
     user_ids[request.sid].update_utterance(message['message'])
     emit('response', {'message': user_ids[request.sid].parse_convo()})
 
@@ -38,4 +38,4 @@ def handle_disconnect():
 
 
 if __name__ == '__main__':
-    socketio.run(app)
+    socketio.run(app, debug=True)

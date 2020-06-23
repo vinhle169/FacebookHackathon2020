@@ -27,9 +27,11 @@ class salutation(main_intent):
             else:
                 del self.traits['wit$greetings']
         if 'wit$greetings' in self.traits:
-            self.response = 'Whatsup!'
-            if 'wit$contact' in self.entities:
-                self.response = f"{self.response[:-1]} {self.entities['wit$contact']['val']}!"
+            self.response = 'Whatsup'
+            name = ''
+            if self.entities.get('wit$contact'):
+                name = self.entities['wit$contact']['val']
+            self.response = f"{self.response} {name}! My name is healBot, how can I be of service?"
         elif 'wit$bye' in self.traits:
             self.response = 'Cya!'
 
@@ -72,6 +74,15 @@ class express(main_intent):
             q1 = f"Here's some information on {q} " + [i for i in search(q1, tld="com", num=1, stop=1, pause=.5)][0]
             q2 = f"Here's info on how to treat {q} " + [i for i in search(q2, tld="com", num=1, stop=1, pause=.5)][0]
             self.response = f"{q1}\n{q2}\nHope this helps!"
+
+        elif 'rona' in self.entities:
+            role = self.entities['rona']['role']
+            if role == 'rona':
+                self.webcrawl('rona')
+            else:
+                with open('response.json', 'r') as cr:
+                    rona_responses = json.load(cr)["corona"]
+                self.response = rona_responses[role]
         self.new = True
 
 class find(main_intent):
@@ -101,6 +112,7 @@ class find(main_intent):
                 self.end_location = self.entities['facilities']['val']
             self.response = f"Where are you trying to reach the {self.end_location} from? I want to tell you the nearest one."
             self.new = False
+
         elif 'wit$location' in self.entities:
             self.curr_location = self.entities['wit$location']['val']
             url = "https://maps.googleapis.com/maps/api/place/textsearch/json?"
@@ -121,7 +133,7 @@ class criticism(main_intent):
         self.review.add((utter, datetime.now()))
         if 'wit$sentiment' in self.traits:
             if self.traits['wit$sentiment'][0] != 'negative':
-                self.response = "Thank you for the kind words you're amazing c:"
+                self.response = "Thank you for the kind words you're amazing (◕‿◕✿)"
                 self.new = True
                 return True
             else:

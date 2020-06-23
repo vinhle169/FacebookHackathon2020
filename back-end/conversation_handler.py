@@ -8,6 +8,7 @@ class conversation(wit):
         print(f'Person: {utter}')
         super().__init__(utter)
         self.current_intent = None
+        self.thanks = {'thanks', 'thank you', 'much appreciated'}
         self.ongoing_intents = {}
         self.criticisms = set()
         self.unknown_response = "I am sorry can you try rephrasing that, I might not be built to handle your request"
@@ -23,6 +24,8 @@ class conversation(wit):
 
     # runs the appropriate intent class
     def parse_convo(self):
+        if self.utterance.lower() in self.thanks:
+            return "No problem! Glad to be of service (◕‿◕✿)" 
         if not self.intent and not self.current_intent:
             self.current_intent = None
             return self.unknown_response
@@ -46,11 +49,13 @@ class conversation(wit):
 
     def find(self):
         if 'find' not in self.ongoing_intents or self.ongoing_intents['find'].new:
+            print('*************')
             self.ongoing_intents['find'] = find(self.entities, self.traits)
             self.ongoing_intents['find'].generate_response()
-            if self.ongoing_intents['find']:
+            if self.ongoing_intents['find'].new:
                 self.current_intent = None
         else:
+            print('###############')
             self.ongoing_intents['find'].generate_response(new_ent=self.entities, new_trait=self.traits)
             self.current_intent = None
         return self.ongoing_intents['find'].response
@@ -91,61 +96,4 @@ class conversation(wit):
 
 
 if __name__ == '__main__':
-    x = conversation('Hey my name is Donald Johnson')
-    print('Bot: ', x.parse_convo(), '\n')
-
-    # x.update_utterance('What is going on recently with COVID-19')
-    # print('Bot:', x.parse_convo(), '\n')
-
-    # x.update_utterance('I think i have a friend that has corona')
-    # print('Bot:', x.parse_convo(), '\n')
-
-    # x.update_utterance('What are the symptoms of corona?')
-    # print('Bot:', x.parse_convo(), '\n')
-
-    # x.update_utterance('Where is the closest dentist?')
-    # print('Bot:', x.parse_convo(), '\n')
-
-    # x.update_utterance('I am trying to reach it from W 529 Shadwell Carson CA')
-    # print('Bot:', x.parse_convo(), '\n')
-
-    # x.update_utterance('Where can I find information online about coughing?')
-    # print('Bot:', x.parse_convo(), '\n')
-
-    # x.update_utterance('I hate this app')
-    # print('Bot:', x.parse_convo(), '\n')
-
-    # x.update_utterance("I don't like healbots attitude")
-    # print('Bot:', x.parse_convo(), '\n')
-
-    # x.update_utterance("I don't like the way healbot looks")
-    # print('Bot:', x.parse_convo(), '\n')
-    # x.update_utterance('No')
-    # print('Bot:', x.parse_convo(), '\n')
-
-    # x.update_utterance("I love the features of this app!")
-    # print('Bot:', x.parse_convo(), '\n')
-
-    # x.update_utterance('Remind me to take my medicine in 24 hours')
-    # print('Bot: ', x.parse_convo(), '\n')
-
-    # x.update_utterance('In 12 minutes')
-    # print('Bot: ', x.parse_convo(), '\n')
-
-    # x.update_utterance('remind me to walk the dogs every 2 hours')
-    # print('Bot:', x.parse_convo(), '\n')
-
-    x.update_utterance('i have pain in my back')
-    print('Bot: ', x.parse_convo(), '\n')
-
-    x.update_utterance('I am feeling a little sad')
-    print('Bot: ', x.parse_convo(), '\n')
-
-    x.update_utterance('I am feeling depressed')
-    print('Bot: ', x.parse_convo(), '\n')
-
-    x.update_utterance('I am happy!')
-    print('Bot: ', x.parse_convo(), '\n')
-
-    x.update_utterance('I am feeling a little scared bc of the rona')
-    print('Bot: ', x.parse_convo(), '\n')
+    pass

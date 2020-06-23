@@ -14,7 +14,6 @@ class wit:
                 self.intent, self.entities, self.traits = None, None, None
                 return
             self.intent = response['intents'][0]['name']
-
         # entities are stored as {entity_name: {val: entity_value, conf: entity: confidence, role: entity_role}, entity_2: {...}...}
         self.entities = {}
         special_cases = {'wit$duration', 'resources', 'wit$location', 'symptom'}
