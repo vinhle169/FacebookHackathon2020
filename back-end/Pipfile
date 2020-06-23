@@ -12,6 +12,7 @@ flask-socketio = "*"
 google = "*"
 beautifulsoup4 = "*"
 requests = "*"
+eventlet = "*"
 
 [requires]
 python_version = "3.7"
