@@ -4,7 +4,7 @@ from conversation_handler import conversation
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'ASDJOAIHJFLKAGNALKGBNAJKLBG'
-socketio = SocketIO(app, cors_allowed_origins="https://heal-bot.netlify.app/*")
+socketio = SocketIO(app, cors_allowed_origins="*")
 user_ids = {}
 
 
