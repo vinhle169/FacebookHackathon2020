@@ -11,7 +11,6 @@ gunicorn = "*"
 flask-socketio = "*"
 google = "*"
 beautifulsoup4 = "*"
-google-search = "*"
 requests = "*"
 
 [requires]
