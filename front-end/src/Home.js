@@ -27,16 +27,13 @@ class Home extends React.Component {
   }
 
   componentDidMount() {
-    this.endpoint = 'http://localhost:5000';
+    this.endpoint = 'localhost:5000';
     this.socket = io(this.endpoint);
     console.log(this.socket)
-    console.log('this far')
-    this.user_id = 'FIXME'  // FIX ME
     this.socket.on('response', (response) => {
+      console.log(response)
       this.receiveMessage(response);
     });
-    this.socket.emit('join', {user_id: this.user_id});
-    console.log(this.socket);
   }
 
   componentWillUnmount() {

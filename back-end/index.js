@@ -14,12 +14,6 @@ const test_message2 = "oh yeah"
 
 io.on('connection', (socket) => {
   console.log("new connection")
-  socket.on('join', ({ user_id }) => {
-    console.log(`${user_id} connected`)
-    // query the previous messages from the database
-
-    socket.emit('response', {message: test_message1})
-  });
   socket.on('sendMessage', ({ message }) => {
     // send message to vinh's thing, then get response
     socket.emit('response', {message: test_message2})
