@@ -1,32 +1,41 @@
 from flask import Flask, render_template, request
 from flask_socketio import SocketIO, emit
-import json
+from conversation_handler import conversation
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'FIXME: Generate secret key'
 socketio = SocketIO(app, cors_allowed_origins="*")
+user_ids = {}
+
 
 @app.route("/")
 def home():
     return render_template("index.html")
 
+
 @socketio.on('connect')
 def handle_connect():
+    global user_ids
     print('NICE')
     print(request.sid)
-    emit('response', {'message': 'hello world'})
+    user_ids.setdefault(request.sid, conversation(''))
+
 
 @socketio.on('sendMessage')
 def handle_message(message):
+    global user_ids
     print(message)
     print('received: ' + message['message'])
-    response = 'fixme: response'
-    emit('response', {'message': message['message']})
+    user_ids[request.sid].update_utterance(message['message'])
+    emit('response', {'message': user_ids[request.sid].parse_convo()})
+
 
 @socketio.on('disconnect')
 def handle_disconnect():
-    # clean up
+    global user_ids
+    del user_ids[request.sid]
     print('user left')
+
 
 if __name__ == '__main__':
     socketio.run(app)
