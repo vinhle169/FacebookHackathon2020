@@ -3,7 +3,7 @@ from flask_socketio import SocketIO, emit
 from conversation_handler import conversation
 
 app = Flask(__name__)
-socketio = SocketIO(app, cors_allowed_origins="https://heal-bot.netlify.app")
+socketio = SocketIO(app, cors_allowed_origins=["https://heal-bot.netlify.app"])
 user_ids = {}
 
 
