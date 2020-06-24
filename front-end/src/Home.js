@@ -14,7 +14,6 @@ const Style = styled.div`
   }
 
   .sendButton {
-
   }
 `;
 
