@@ -1,6 +1,6 @@
 import re
 import json
-import grequests
+import erequests
 from random import randint
 from datetime import datetime
 from bs4 import BeautifulSoup
@@ -117,8 +117,8 @@ class find(main_intent):
         elif 'wit$location' in self.entities:
             self.curr_location = self.entities['wit$location']['val']
             url = "https://maps.googleapis.com/maps/api/place/textsearch/json?"
-            r = grequests.get(url + 'query=' + self.end_location + '&open' + '&key=' + self.g_api_key)
-            r = grequests.map([r])
+            r = erequests.async.get(url + 'query=' + self.end_location + '&open' + '&key=' + self.g_api_key)
+            r = erequests.map([r])
             result = r[-1].json()['results'][0]
             address = result['formatted_address']
             name = result['name']
@@ -213,8 +213,8 @@ class information(main_intent):
     def webcrawl(self, u):
         if u == 'rona':
             url = "https://www.cdc.gov/coronavirus/2019-ncov/cases-updates/cases-in-us.html"
-            response = grequests.get(url)
-            x = grequests.map([response])
+            response = erequests.async.get(url)
+            x = erequests.map([response])
             soup = BeautifulSoup(x[-1].content, 'html.parser')
             stats = soup.findAll("div", class_="callout")
             target = stats[0].get_text().lower()

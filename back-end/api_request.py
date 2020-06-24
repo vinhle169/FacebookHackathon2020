@@ -1,4 +1,4 @@
-import grequests
+import erequests
 
 # class to handle the return of a get call to the wit api when given an utterance
 class wit:
@@ -8,8 +8,8 @@ class wit:
         URL = f'https://api.wit.ai/message?v=20200615&q={self.utterance}'
         self.server_Token = 'XHAXSXINWBD5KFLNDL5AQWXO4O7672EC'
         self.auth_Header = {'Authorization': f'Bearer {self.server_Token}'}
-        response = grequests.get(url=URL, headers=self.auth_Header)
-        response = grequests.map([response])
+        response = erequests.async.get(url=URL, headers=self.auth_Header)
+        response = erequests.map([response])
         # response = grequests.get(url=URL, headers=self.auth_Header).json()
         response = response[0].json()
         if new_convo:
