@@ -3,7 +3,7 @@ Creating a project that makes use of the natural language interactions that leve
 
 The bot is currently deployed at https://heal-bot.netlify.app/  
 
-Some phrases to try out:
+Some phrases to try out:  
 Hello my name is "insert name here"  
 Goodbye  
 I am sad  
