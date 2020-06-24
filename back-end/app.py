@@ -23,7 +23,7 @@ def handle_connect():
     print(request.sid)
     print('connected to ', request.sid)
     user_ids.setdefault(request.sid, conversation(''))
-    emit('response', {'message': "Hello, user!"})
+    emit('response', {'message': "Hello, I am Heal-Bot!"})
 
 
 @socketio.on('sendMessage')
