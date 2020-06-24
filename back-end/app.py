@@ -3,6 +3,7 @@ curious_george.patch_all(thread=False, select=False)
 from flask import Flask, render_template, request
 from flask_socketio import SocketIO, emit
 from conversation_handler import conversation
+import time
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'ASDJOAIHJFLKAGNALKGBNAJKLBG'
@@ -20,6 +21,7 @@ def handle_connect():
     global user_ids
     print('USER CONNECTED!')
     print(request.sid)
+    time.sleep(2) #debugging
     print('connected to ', request.sid)
     user_ids.setdefault(request.sid, conversation(''))
 
