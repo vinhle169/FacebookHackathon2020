@@ -7,7 +7,7 @@ import time
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'ASDJOAIHJFLKAGNALKGBNAJKLBG'
-socketio = SocketIO(app, cors_allowed_origins="*")
+socketio = SocketIO(app, engineio_logger=True, logger=True, cors_allowed_origins="*")
 user_ids = {}
 
 
