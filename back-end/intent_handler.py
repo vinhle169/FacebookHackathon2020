@@ -14,7 +14,7 @@ class main_intent:
         self.new = True
         self.response = "I'm not sure what are you saying can you try rephrasing that"
         self.current_time = datetime.now()
-        self.g_api_key = 'AIzaSyCE3wsY5xE41YPGVQavGq0EyVD1lo1b44Q'
+        self.g_api_key = 'AIzaSyBqvjz4F8ICqgXXBKVglWvXuDpDRQ6jJ5E'
 
 class salutation(main_intent):
 
@@ -32,7 +32,7 @@ class salutation(main_intent):
             name = ''
             if self.entities.get('wit$contact'):
                 name = self.entities['wit$contact']['val']
-            self.response = f"{self.response} {name}! My name is healBot, how can I be of service?"
+            self.response = f"{self.response} {name}! My name is Heal-Bot, how can I be of service?"
         elif 'wit$bye' in self.traits:
             self.response = 'Cya!'
 
@@ -116,8 +116,14 @@ class find(main_intent):
 
         elif 'wit$location' in self.entities:
             self.curr_location = self.entities['wit$location']['val']
+            url = "https://maps.googleapis.com/maps/api/geocode/json?address="
+            r = grequests.get(url + self.curr_location + '&key=' + self.g_api_key)
+            r = grequests.map([r])
+            result = r[0].json()['results'][0]['geometry']['location']
+            lat, lng = str(result['lat']), str(result['lng'])
+            loc = '&location=' + lat + ',' + lng
             url = "https://maps.googleapis.com/maps/api/place/textsearch/json?"
-            r = grequests.get(url + 'query=' + self.end_location + '&open' + '&key=' + self.g_api_key)
+            r = grequests.get(url + 'query=' + self.end_location + '&open' + loc + '&key=' + self.g_api_key)
             r = grequests.map([r])
             result = r[-1].json()['results'][0]
             address = result['formatted_address']
