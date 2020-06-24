@@ -3,11 +3,11 @@ curious_george.patch_all(thread=False, select=False)
 from flask import Flask, render_template, request
 from flask_socketio import SocketIO, emit
 from conversation_handler import conversation
+import time
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'ASDJOAIHJFLKAGNALKGBNAJKLBG'
-app.config['DEBUG'] = True
-socketio = SocketIO(app, cors_allowed_origins="*")
+socketio = SocketIO(app, engineio_logger=True, logger=True, cors_allowed_origins="*")
 user_ids = {}
 
 
@@ -22,7 +22,8 @@ def handle_connect():
     print('USER CONNECTED!')
     print(request.sid)
     print('connected to ', request.sid)
-    user_ids.setdefault(request.sid, conversation(''))
+    #user_ids.setdefault(request.sid, conversation(''))
+    emit('response', {'message': "Hello, user!"})
 
 
 @socketio.on('sendMessage')
@@ -31,8 +32,9 @@ def handle_message(message):
     print('in sendMessage')
     print('Message:', message)
     print(request.sid + ' says: ' + message['message'])
-    user_ids[request.sid].update_utterance(message['message'])
-    emit('response', {'message': user_ids[request.sid].parse_convo()})
+    #user_ids[request.sid].update_utterance(message['message'])
+    #emit('response', {'message': user_ids[request.sid].parse_convo()})
+    emit('response', {'message': "test response DELETE"})
 
 
 @socketio.on('disconnect')
@@ -44,5 +46,11 @@ def handle_disconnect():
     print('user left')
 
 
+@socketio.on_error()
+def error_handler(e):
+    print('Error!')
+    print(e)
+    
+
 if __name__ == '__main__':
-    socketio.run(app, debug=True)
+    socketio.run(app)
