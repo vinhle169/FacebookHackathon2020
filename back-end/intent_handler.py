@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 from googlesearch import search
 import eventlet
 
-eventlet.patcher.import_patched("requests")
+requests = eventlet.patcher.import_patched("requests")
 
 class main_intent:
 
