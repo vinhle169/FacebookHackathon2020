@@ -11,7 +11,9 @@ gunicorn = "*"
 flask-socketio = "*"
 google = "*"
 beautifulsoup4 = "*"
-requests = "*"
+erequests = "*"
+grequests = "*"
+gevent = "*"
 
 [requires]
 python_version = "3.7"

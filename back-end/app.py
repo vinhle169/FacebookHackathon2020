@@ -1,10 +1,13 @@
+from gevent import monkey as curious_george
+curious_george.patch_all(thread=False, select=False)
 from flask import Flask, render_template, request
 from flask_socketio import SocketIO, emit
 from conversation_handler import conversation
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'ASDJOAIHJFLKAGNALKGBNAJKLBG'
-socketio = SocketIO(app, cors_allowed_origins="https://heal-bot.netlify.app/")
+app.config['DEBUG'] = True
+socketio = SocketIO(app, cors_allowed_origins="*")
 user_ids = {}
 
 
@@ -16,16 +19,18 @@ def home():
 @socketio.on('connect')
 def handle_connect():
     global user_ids
-    print('NICE')
+    print('USER CONNECTED!')
     print(request.sid)
+    print('connected to ', request.sid)
     user_ids.setdefault(request.sid, conversation(''))
 
 
 @socketio.on('sendMessage')
 def handle_message(message):
     global user_ids
-    print(message)
-    print(request.sid + ': ' + message['message'])
+    print('in sendMessage')
+    print('Message:', message)
+    print(request.sid + ' says: ' + message['message'])
     user_ids[request.sid].update_utterance(message['message'])
     emit('response', {'message': user_ids[request.sid].parse_convo()})
 
@@ -33,7 +38,9 @@ def handle_message(message):
 @socketio.on('disconnect')
 def handle_disconnect():
     global user_ids
-    del user_ids[request.sid]
+    if request.sid in user_ids:
+        print('user deleted')
+        del user_ids[request.sid]
     print('user left')
 
 

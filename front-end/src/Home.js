@@ -37,6 +37,7 @@ class Home extends React.Component {
   }
 
   componentWillUnmount() {
+    console.log(this.socket)
     this.socket.emit('disconnect');
     this.socket.off()
   }
@@ -53,6 +54,8 @@ class Home extends React.Component {
 
   sendHandler(event) {
     event.preventDefault();
+    console.log(this.socket)
+    console.log('Sending')
     this.socket.emit('sendMessage', {message: this.state.nextMessage});
     let newMessage = new Message({id: 0, message: this.state.nextMessage});
     this.setState({messages: this.state.messages.concat(newMessage), nextMessage: ''});
