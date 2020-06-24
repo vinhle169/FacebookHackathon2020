@@ -3,6 +3,7 @@ from flask_socketio import SocketIO, emit
 from conversation_handler import conversation
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'ASDJOAIHJFLKAGNALKGBNAJKLBG'
 socketio = SocketIO(app, cors_allowed_origins="*")
 user_ids = {}
 
