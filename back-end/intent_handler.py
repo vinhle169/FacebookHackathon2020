@@ -1,13 +1,10 @@
 import re
 import json
-#import requests
+import grequests
 from random import randint
 from datetime import datetime
 from bs4 import BeautifulSoup
 from googlesearch import search
-import eventlet
-
-requests = eventlet.import_patched('requests.__init__')
 
 class main_intent:
 
