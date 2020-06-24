@@ -19,23 +19,23 @@ def home():
 def handle_connect():
     global user_ids
     print('NICE')
-    print(request.cookies.get('username'))
-    user_ids.setdefault(request.cookies.get('username'), conversation(''))
+    print(request.sid)
+    user_ids.setdefault(request.sid, conversation(''))
 
 
 @socketio.on('sendMessage')
 def handle_message(message):
     global user_ids
     print(message)
-    print(request.cookies.get('username') + ': ' + message['message'])
-    user_ids[request.cookies.get('username')].update_utterance(message['message'])
-    emit('response', {'message': user_ids[request.cookies.get('username')].parse_convo()})
+    print(request.sid + ': ' + message['message'])
+    user_ids[request.sid].update_utterance(message['message'])
+    emit('response', {'message': user_ids[request.sid].parse_convo()})
 
 
 @socketio.on('disconnect')
 def handle_disconnect():
     global user_ids
-    del user_ids[request.cookies.get('username')]
+    del user_ids[request.sid]
     print('user left')
 
 
