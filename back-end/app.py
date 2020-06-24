@@ -21,9 +21,8 @@ def handle_connect():
     global user_ids
     print('USER CONNECTED!')
     print(request.sid)
-    time.sleep(2) #debugging
     print('connected to ', request.sid)
-    user_ids.setdefault(request.sid, conversation(''))
+    #user_ids.setdefault(request.sid, conversation(''))
 
 
 @socketio.on('sendMessage')
@@ -32,7 +31,7 @@ def handle_message(message):
     print('in sendMessage')
     print('Message:', message)
     print(request.sid + ' says: ' + message['message'])
-    user_ids[request.sid].update_utterance(message['message'])
+    #user_ids[request.sid].update_utterance(message['message'])
     emit('response', {'message': user_ids[request.sid].parse_convo()})
 
 
