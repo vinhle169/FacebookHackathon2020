@@ -43,5 +43,11 @@ def handle_disconnect():
     print('user left')
 
 
+@socketio.on_error()
+def error_handler(e):
+    print('Error!')
+    print(e)
+    
+
 if __name__ == '__main__':
     socketio.run(app)
