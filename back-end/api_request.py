@@ -4,16 +4,16 @@ import grequests
 class wit:
 
     def __init__(self, utter, new_convo=True):
+        print("UTTERANCE: ", utter)
         self.utterance = str(utter)
         URL = f'https://api.wit.ai/message?v=20200615&q={self.utterance}'
         self.server_Token = 'XHAXSXINWBD5KFLNDL5AQWXO4O7672EC'
         self.auth_Header = {'Authorization': f'Bearer {self.server_Token}'}
         response = grequests.get(url=URL, headers=self.auth_Header)
-        print(response)
+        print("GREQ.GET RESULT: ", response)
         response = grequests.map([response])
-        print(response)
-        # response = grequests.get(url=URL, headers=self.auth_Header).json()
         response = response[0].json()
+        print("RESPONSE: ", response)
         if new_convo:
             if 'intents' not in response or len(response['intents']) == 0:
                 self.intent, self.entities, self.traits = None, None, None
