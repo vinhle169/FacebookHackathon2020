@@ -32,7 +32,7 @@ class salutation(main_intent):
             name = ''
             if self.entities.get('wit$contact'):
                 name = self.entities['wit$contact']['val']
-            self.response = f"{self.response} {name}! My name is healBot, how can I be of service?"
+            self.response = f"{self.response} {name}! My name is Heal-Bot, how can I be of service?"
         elif 'wit$bye' in self.traits:
             self.response = 'Cya!'
 
