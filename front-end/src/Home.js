@@ -27,8 +27,8 @@ class Home extends React.Component {
   }
 
   componentDidMount() {
-    this.endpoint = 'localhost:5000';
-    this.socket = io(this.endpoint);
+    this.endpoint = 'https://heal-bot.herokuapp.com';
+    this.socket = io(this.endpoint, {transports: ['websocket'], upgrade: false});
     console.log(this.socket)
     this.socket.on('response', (response) => {
       console.log(response)
