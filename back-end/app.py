@@ -22,7 +22,7 @@ def handle_connect():
     print('USER CONNECTED!')
     print(request.sid)
     print('connected to ', request.sid)
-    #user_ids.setdefault(request.sid, conversation(''))
+    user_ids.setdefault(request.sid, conversation(''))
     emit('response', {'message': "Hello, user!"})
 
 
@@ -32,9 +32,8 @@ def handle_message(message):
     print('in sendMessage')
     print('Message:', message)
     print(request.sid + ' says: ' + message['message'])
-    #user_ids[request.sid].update_utterance(message['message'])
-    #emit('response', {'message': user_ids[request.sid].parse_convo()})
-    emit('response', {'message': "test response DELETE"})
+    user_ids[request.sid].update_utterance(message['message'])
+    emit('response', {'message': user_ids[request.sid].parse_convo()})
 
 
 @socketio.on('disconnect')
