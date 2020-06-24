@@ -13,7 +13,11 @@ class wit:
         response = grequests.map([response])
         # response = grequests.get(url=URL, headers=self.auth_Header).json()
         print(response)
-        response = response[0].json()
+        try:
+            response = response[0].json()
+        except:
+            self.intent, self.entities, self.traits = None, None, None
+            return
         if new_convo:
             if 'intents' not in response or len(response['intents']) == 0:
                 self.intent, self.entities, self.traits = None, None, None
@@ -45,3 +49,5 @@ class wit:
             self.traits = {key: (val[0]['value'], val[0]['confidence']) for key, val in response['traits'].items()}
         else:
             self.traits = None
+
+x = wit('dsldnsaodjasoas')
