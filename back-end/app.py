@@ -18,7 +18,7 @@ def home():
 @socketio.on('connect')
 def handle_connect():
     global user_ids
-    print('USER CONNECTED')
+    print('USER CONNECTED!')
     print(request.sid)
     print('connected to ', request.sid)
     user_ids.setdefault(request.sid, conversation(''))
