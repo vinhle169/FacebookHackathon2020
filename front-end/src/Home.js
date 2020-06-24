@@ -27,7 +27,7 @@ class Home extends React.Component {
   }
 
   componentDidMount() {
-    this.endpoint = 'https://heal-bot.herokuapp.com/';
+    this.endpoint = 'https://healbot2.herokuapp.com/';
     this.socket = io(this.endpoint);
     console.log(this.socket)
     this.socket.on('response', (response) => {
