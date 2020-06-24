@@ -32,7 +32,8 @@ def handle_message(message):
     print('Message:', message)
     print(request.sid + ' says: ' + message['message'])
     #user_ids[request.sid].update_utterance(message['message'])
-    emit('response', {'message': user_ids[request.sid].parse_convo()})
+    #emit('response', {'message': user_ids[request.sid].parse_convo()})
+    emit('response', "test response DELETE")
 
 
 @socketio.on('disconnect')
