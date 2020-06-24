@@ -9,7 +9,7 @@ class wit:
         self.server_Token = 'XHAXSXINWBD5KFLNDL5AQWXO4O7672EC'
         self.auth_Header = {'Authorization': f'Bearer {self.server_Token}'}
         response = erequests.async.get(url=URL, headers=self.auth_Header)
-        response = erequests.map([response])
+        response = list(erequests.map([response]))
         # response = grequests.get(url=URL, headers=self.auth_Header).json()
         response = response[0].json()
         if new_convo:
