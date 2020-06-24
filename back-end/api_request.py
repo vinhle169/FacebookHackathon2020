@@ -10,7 +10,7 @@ class wit:
         self.auth_Header = {'Authorization': f'Bearer {self.server_Token}'}
         response = grequests.get(url=URL, headers=self.auth_Header)
         print(response)
-        response = grequests.map(response)
+        response = grequests.map([response])
         print(response)
         # response = grequests.get(url=URL, headers=self.auth_Header).json()
         response = response[0].json()
