@@ -25,7 +25,7 @@ class conversation(wit):
     # runs the appropriate intent class
     def parse_convo(self):
         if self.utterance.lower() in self.thanks:
-            return "No problem! Glad to be of service (◕‿◕✿)" 
+            return "No problem! Glad to be of service (◕‿◕✿)"
         if not self.intent and not self.current_intent:
             self.current_intent = None
             return self.unknown_response
@@ -49,13 +49,11 @@ class conversation(wit):
 
     def find(self):
         if 'find' not in self.ongoing_intents or self.ongoing_intents['find'].new:
-            print('*************')
             self.ongoing_intents['find'] = find(self.entities, self.traits)
             self.ongoing_intents['find'].generate_response()
             if self.ongoing_intents['find'].new:
                 self.current_intent = None
         else:
-            print('###############')
             self.ongoing_intents['find'].generate_response(new_ent=self.entities, new_trait=self.traits)
             self.current_intent = None
         return self.ongoing_intents['find'].response
