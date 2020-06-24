@@ -20,14 +20,16 @@ def handle_connect():
     global user_ids
     print('USER CONNECTED')
     print(request.sid)
+    print('connected to ', request.sid)
     user_ids.setdefault(request.sid, conversation(''))
 
 
 @socketio.on('sendMessage')
 def handle_message(message):
     global user_ids
-    print('MENSAJE: ', message)
-    print(request.sid + ': ' + message['message'])
+    print('in sendMessage')
+    print('Message:', message)
+    print(request.sid + ' says: ' + message['message'])
     user_ids[request.sid].update_utterance(message['message'])
     emit('response', {'message': user_ids[request.sid].parse_convo()})
 
@@ -35,8 +37,10 @@ def handle_message(message):
 @socketio.on('disconnect')
 def handle_disconnect():
     global user_ids
-    del user_ids[request.sid]
-    print('USER LEFT')
+    if request.sid in user_ids:
+        print('user deleted')
+        del user_ids[request.sid]
+    print('user left')
 
 
 if __name__ == '__main__':
