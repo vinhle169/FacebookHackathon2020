@@ -1,7 +1,7 @@
 #import requests
 import eventlet
 
-requests = eventlet.import_patched("requests")
+requests = eventlet.import_patched('requests.__init__')
 
 # class to handle the return of a get call to the wit api when given an utterance
 class wit:
