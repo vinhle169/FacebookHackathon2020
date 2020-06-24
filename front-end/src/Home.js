@@ -48,8 +48,11 @@ class Home extends React.Component {
   }
 
   receiveMessage({ message }) {
-    let newMessage = new Message({id: 1, message })
-    this.setState({messages: this.state.messages.concat(newMessage)})
+    var splitMessages = message.split("\n");
+    var messages = []
+    for (let i = 0; i < splitMessages.length; i++) {
+      this.setState({messages: this.state.messages.concat(new Message({id: 1, message: splitMessages[i] }))})
+    }
   }
 
   sendHandler(event) {
