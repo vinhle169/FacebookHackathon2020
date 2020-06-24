@@ -6,6 +6,7 @@ from conversation_handler import conversation
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'ASDJOAIHJFLKAGNALKGBNAJKLBG'
+app.config['DEBUG'] = True
 socketio = SocketIO(app, cors_allowed_origins="*")
 user_ids = {}
 
