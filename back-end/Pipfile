@@ -13,6 +13,7 @@ google = "*"
 beautifulsoup4 = "*"
 eventlet = "*"
 erequests = "*"
+grequests = "*"
 
 [requires]
 python_version = "3.7"
