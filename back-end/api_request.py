@@ -9,8 +9,10 @@ class wit:
         self.server_Token = 'XHAXSXINWBD5KFLNDL5AQWXO4O7672EC'
         self.auth_Header = {'Authorization': f'Bearer {self.server_Token}'}
         response = grequests.get(url=URL, headers=self.auth_Header)
+        print(response)
         response = grequests.map([response])
         # response = grequests.get(url=URL, headers=self.auth_Header).json()
+        print(response)
         response = response[0].json()
         if new_convo:
             if 'intents' not in response or len(response['intents']) == 0:
