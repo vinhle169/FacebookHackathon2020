@@ -5,9 +5,6 @@ from random import randint
 from datetime import datetime
 from bs4 import BeautifulSoup
 from googlesearch import search
-import eventlet
-
-eventlet.monkey_patch()
 
 class main_intent:
 
