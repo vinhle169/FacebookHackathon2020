@@ -1,3 +1,5 @@
+from gevent import monkey as curious_george
+curious_george.patch_all(thread=False, select=False)
 from flask import Flask, render_template, request
 from flask_socketio import SocketIO, emit
 from conversation_handler import conversation
