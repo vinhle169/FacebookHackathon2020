@@ -1,7 +1,7 @@
 # FacebookHackathon2020
 Creating a project that makes use of the natural language interactions that leverage the Wit.ai platform as provided by Facebook.
 
-The bot is currently deployed at https://heal-bot.netlify.app/  
+The bot is <s>currently deployed at https://heal-bot.netlify.app/</s> not deployed anymore due to a lack of resources.  
 
 Some phrases to try out:  
 Hello my name is "insert name here"  
